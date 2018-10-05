@@ -7,6 +7,7 @@
 // https://github.com/CodingTrain/Toy-Neural-Network-JS/tree/master/examples/doodle_classification
 
 
+
 // 28x28 images = 784 pixels. Quick maths.
 let dataLength = 784;
 
@@ -186,7 +187,7 @@ function setup(){
     // Let's take the size 10 subarray of this Doodle index
     let labelsResult = testing_ys.dataSync().subarray(
                                           otherOffset,
-                                          otherOffset + doodleLabelList.length;
+                                          otherOffset + doodleLabelList.length);
     // Now that we have the subarry, let's find which index equals 1
     let doodleIndex;
     // For all indexes

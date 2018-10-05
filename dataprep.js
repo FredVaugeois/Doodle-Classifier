@@ -13,7 +13,6 @@ function prepareData(data, labels){
   let doodles = [];
   let labelsData = [];
   let returnedTensors = [];
-
   // For all doodles
   for (let i = 0; i < data.length; i++){
     // Let's create a pixel array to store each of them
@@ -47,6 +46,7 @@ function prepareData(data, labels){
   //       this. I'll do it someday. Maybe.
   returnedTensors[0] = xs;
   returnedTensors[1] = ys;
+  console.log(xs.dataSync());
   return returnedTensors;
 }
 

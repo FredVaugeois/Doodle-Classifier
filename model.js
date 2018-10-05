@@ -17,6 +17,8 @@
 // just the kind of person that doesn't want to learn how to mess with the data
 // of a ML project, this is the part that you'll love and cherish.
 
+
+
 // This is the number of images of each doodle.
 // That means the total number of images is 6000 x (number of doodles).
 let numberOfEachDoodle = 6000;
@@ -38,7 +40,6 @@ let doodleLabelList = [
   'Hammer',
   'Drill'
 ]
-
 
 // Hidden layers
 // You can add and remove layers or change their neurons as you wish.
@@ -87,10 +88,10 @@ const model_Loss = "meanSquaredError";
 const training_DoShuffle = true;
 const training_ValidationSplit = 0.1;
 const training_BatchSize = 8;
-const training_NumEpochs = 20;
+const training_NumEpochs = 15;
 
 // Training vs testing data FOR THE UI ONLY
-const data_proportion = 0.8;
+const data_proportion = 0.9;
 
 
 // Method that build the model (Yeah that's why I called it that way)

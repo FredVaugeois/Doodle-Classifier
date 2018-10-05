@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>doodle classifier</title>
+
+	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.13.0"> </script>
+	<script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/p5.min.js"></script>
+  <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/addons/p5.dom.min.js"></script>
+	<script src="bytesLoader.js"></script>
+	<script src="model.js"></script>
+	<script src="dataprep.js"></script>
+	<script src="sketch.js"></script>
+	<style>
+	body {
+		background-color: #AAA;
+	}
+	button {
+		font-size: 24pt;
+		margin: 10px;
+	}
+	</style>
+</head>
+<body>
+	<button id="guess">guess</button>
+	<button id="clear">clear</button>
+	<button id="generate">generate</button>
+</body>
+</html>

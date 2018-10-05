@@ -9,8 +9,6 @@ Also, since this program imports data from local files, some browsers don't like
 
 --allow-file-access-from-files => "(C:\Program Files (x86)\Google\Chrome.exe --allow-file-access-from-files" for example.
 
-Finally, you can basically change any parameter you like in the "model.js" file. I know it's written in french, but the variables at the top of this file are there to be tweaked to achieve better performances. You can add layers, modify the number of neurons of each layer, change the optimizer function, etc. 
-
-I'll release an english version of this project soon!
+Finally, you can basically change any parameter you like in the "model.js" file. You can add layers, modify the number of neurons of each layer, change the optimizer function, etc. 
 
 Have fun!

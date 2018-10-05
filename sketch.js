@@ -7,33 +7,16 @@
 // https://github.com/CodingTrain/Toy-Neural-Network-JS/tree/master/examples/doodle_classification
 
 
-
-// Public variables
-let totalData = 6000;
+// 28x28 images = 784 pixels. Quick maths.
 let dataLength = 784;
 
-// Liste des doodles que l'on va traiter
-let doodleLabelList = [
-  'Pelle',
-  'Scie',
-  'Tournevis',
-  'Camion',
-  'Tracteur',
-  'Ciseaux',
-  'Clou',
-  'Échelle',
-  'Marteau',
-  'Drill'
-]
-
-
-// Tableaux de donnees
+// Data arrays
 let training_data = [];
 let testing_data = [];
 let training_labels = [];
 let testing_labels = [];
 
-// Tableaux de bytes loades par loadBytes
+// Contains the bytes loaded from the byteLoader function
 let shovelData = {};
 let sawData = {};
 let screwdriverData = {};
@@ -46,7 +29,7 @@ let hammerData = {};
 let drillData = {};
 
 
-// Modele
+// Model
 let model;
 
 // Tensors
@@ -55,9 +38,10 @@ ys = {};
 testing_xs = {};
 testing_ys = {};
 
-// Fonction qui va loader les fichiers de donnees ou sont stockes les doodles
+// This functions is called at the begining (with p5.js) and loads the
+// binary files into the corresponding bytes array.
 function preload(){
-  // On load les donnees
+  // Use the loadBytes function to fill the data arrays
   shovelData = loadBytes('./datasets/shovel.bin');
   sawData = loadBytes('./datasets/saw.bin');
   screwdriverData = loadBytes('./datasets/screwdriver.bin');
@@ -70,82 +54,103 @@ function preload(){
   drillData = loadBytes('./datasets/drill.bin');
 }
 
-// Fonction de setup pour p5.js
+// Setup function of p5.js (called after preload)
 function setup(){
-  // On cree notre interface
+  // Let's create a 280 x 280 black interface (canvas)
   createCanvas(280, 280);
   background(0);
 
-  // On initialise les donnees
+  // Initialize the data (see "dataprep" for solid nightmares)
   initializeData();
 
+  // Don't panick: this shows that something's happening!
   console.log("Creating training tensors");
-
-  // On cree les tensors pour les donnees d'entrainement et de tests
+  // Let's create the training and testing tensors
   let trainingTensors = prepareData(training_data, training_labels);
+  // Don't panick: this shows that something's happening!
   console.log("Done");
+  // Don't panick: this shows that something's happening!
   console.log("Creating testing tensors");
   let testingTensors = prepareData(testing_data, testing_labels);
+  // Don't panick: this shows that something's happening!
   console.log("Done");
 
-  // On affecte nos xs et ys
+
+  // Let's get the xs and ys of training and testing tensors (yeah, I know, this
+  // is horrible code. Make me feel bad).
   xs = trainingTensors[0];
   ys = trainingTensors[1];
   testing_xs = testingTensors[0];
   testing_ys = testingTensors[1];
 
-  // On construit le modele
+  // Don't panick: this shows that something's happening!
   console.log("Creating model");
-  // On construit notre modele
+  // Don't panick: this shows that something's happening!
   model = buildModel();
+  // Don't panick: this shows that something's happening!
   console.log("Done");
 
-
+  // Don't panick: this shows that something's happening!
   console.log("Training model");
-  // On entraine notre modele
+
+  // Let's train the model (this .then(() => thingy is an application of the
+  // new ES6 functionnality combined with the js promises).
   train().then(() => {
+      // Don't panick: this shows that something's happening!
       console.log("Done");
-      // On evalue notre modele
-      const evaluation = model.evaluate(testing_xs, testing_ys);
-      evaluation[0].print();
   });
 
-  // On s'amuse avec notre modele!
+  // Let's have fun times for all friends and family with the model!
+
+  // This guess button makes the NN predict what he thinks what you draw is.
+  // If he guesses wrong, you either s*ck at drawing or the NN is not trained
+  // correctly. It's a hard guess to take, since it's a 50-50 chance.
   let guessButton = select('#guess');
-  // Si on appuie sur le bouton "Guess"
+
+  // Mouse pressed event of this guess button
   guessButton.mousePressed(function() {
-    // Declaration des variables
+    // Local variables
     let inputs = [];
     let inputImage = [];
 
-    // On prend l'image dessinee, on la redimensionne et on en prend les pixels
+    // Let's get all the pixels drawn on the canvas
     let img = get();
+    // Let's resize the image as a 28x28 image (instead of 280x280 because
+    // Mr NN has no freaking clue what is a 280x280 canvas).
     img.resize(28, 28);
     img.loadPixels();
 
-    // Pour tous les pixels, on inverse la couleur pour blanc sur noir et
-    // on normalise la valeur que cela donne
+    // For all pixels, let's flip the black to white and white to black (Mr NN
+    // sees drawins as black on white instead of white on black)
     for (let i = 0; i < dataLength; i++) {
+      // Btw, the *4 is because with p5.js, each pixel is divided into four
+      // values: R, G, B and transparency. The 4th one is the only one we
+      // actually want, since it's white on black
       let bright = img.pixels[i * 4];
+      // Let's also normalize the pixels (machine learning stuff)
       inputs[i] = bright / 255.0;
     }
-    // On cree un tableau 2D avec les pixels de cette image
+    // We need to create a 2D array with this pixel because the model has been
+    // trained with 2D tensors.
     inputImage[0] = inputs;
 
-    // On demande a notre modele de predire a quel indice du tableau cela
-    // appartient et on affiche le resultat
+    // Let's ask Mr. NN to predict what you have drawn!
     let tensorToPredict = tf.tensor2d(inputImage);
+    // Let's see the probability vector that he processed
     let guess = model.predict(tensorToPredict);
+    // Let's take the index with the highest probability
     let argMax = guess.argMax(1);
+    // Let's wait for the GPU to give us the value back (dataSYNC)
     let index = argMax.dataSync()[0];
 
-    // On va voir a quoi cela appartient!
+    // Alright, let's see what label this corresponds to!
     let classification = doodleLabelList[index];
+    // What the AI thinks you draw is (drumroll)
     console.log(classification);
   });
 
 
-  // Bouton pour effacer le dessin actuel
+  // This button simply clears the canvas by making it all black.
   let clearButton = select('#clear');
   clearButton.mousePressed(function() {
     background(0);
@@ -154,25 +159,52 @@ function setup(){
 
 
 
-  // Bouton pour aller chercher un dessin dans le testing data
+  // This button generates a drawing from the testing set so that you can
+  // ask the AI to guess what he thinks it is (he's never seen it btw).
   let generateButton = select("#generate");
+
   generateButton.mousePressed(function() {
+    // Reset the canvas
     background(0);
 
-    // On genere on nombre aleatoire entre 0 et le nombre de donnees de test
-    let randomIndex = floor(random((totalData * 10) * (1-data_proportion)));
+    // Let's generate a random index to go fetch the Doodle
+    let randomIndex = floor(random((numberOfEachDoodle * 10) * (1-data_proportion)));
+    // The random index needs to be 'Offset-ed' (yeah that's not a word) by
+    // the length (in pixels) of the doodle so that it corresponds to the
+    // beginning of the actual index'th doodle
     let offset = randomIndex * dataLength;
 
-    // On va chercher l'objet qui correspond a cette valeur
-    let doodlePixels = [];
-    doodlePixels = testing_xs.dataSync().subarray(offset, offset + dataLength);
+    // Let's store the pixels of that doodle in an array (use datasync for
+    // promises and fun stuff like that)
+    let doodlePixels = testing_xs.dataSync().subarray(offset, offset + dataLength);
 
-    // On cree l'objet d'image
+    // This offset corresponds to the fact that the label data is actually
+    // a big array that contains a bunch of size 10 subarrays that contain
+    // either 0 or 1 in each index that tells us wich index corresponds
+    // to the doodle. That's what the "oneHot" vector does.
+    let otherOffset = randomIndex * doodleLabelList.length;
+    // Let's take the size 10 subarray of this Doodle index
+    let labelsResult = testing_ys.dataSync().subarray(
+                                          otherOffset,
+                                          otherOffset + doodleLabelList.length;
+    // Now that we have the subarry, let's find which index equals 1
+    let doodleIndex;
+    // For all indexes
+    for(let i = 0; i < labelsResult.length; i++){
+      // If the subarray index equals one, this is the one!
+      if(labelsResult[i] === 1){
+        doodleIndex = i;
+      }
+    }
+    // Let's log the string that corresponds to this index
+    console.log(doodleLabelList[doodleIndex]);
+
+    // Let's create the image of this bad boy
     let img = createImage(28, 28);
+    // Let's load its pixels into the image
     img.loadPixels();
 
-    console.log(randomIndex);
-    // On affecte les bons pixels
+    // Let's draw the pixels correctly (as I said earlier, RGB + transparency)
     for (let i = 0; i < dataLength; i++){
       let val = doodlePixels[i] * 255;
       img.pixels[i*4 + 0] = val;
@@ -180,33 +212,25 @@ function setup(){
       img.pixels[i*4 + 2] = val;
       img.pixels[i*4 + 3] = 255;
     }
-    // On met a jours les pixels et on affiche l'image
+    // Update the pixels, resize the 28x28 for a 280x280 (that's why the
+    // drawings are so darn horrible) and let's show this wonderful image.
     img.updatePixels();
     img.resize(280, 280);
     image(img, 0, 0);
-
-    let labelsResult = testing_ys.dataSync().subarray(randomIndex * doodleLabelList.length, (randomIndex * doodleLabelList.length) + doodleLabelList.length);
-
-    let doodleIndex;
-    // Pour tout le vecteur resultant
-    for(let i = 0; i < labelsResult.length; i++){
-      if(labelsResult[i] === 1){
-        doodleIndex = i;
-      }
-    }
-    // On indque ce que c'est reellement cense etre
-    console.log(doodleLabelList[doodleIndex]);
   });
 }
 
 
-// Methode draw (qui est executee non-stop)
+// Draw method (called non-stop by p5.js)
 function draw() {
+  // Let's put a 8 pixel wide stroke weight and set the color as white
   strokeWeight(8);
   stroke(255);
 
-  // Si on appuie sur la souris, on dessine une ligne a cet endroit. C'est
-  // ce qui permet de faire des beaux petits dessins
+  // Each time this method is called (multiple times/second), it detects if
+  // the mouse is pressed and draws a line if it's the case. Even though it's
+  // a really tiny line, since it's called a bunch of times per second, this
+  // actually makes a nice little drawing function!
   if (mouseIsPressed) {
     line(pmouseX, pmouseY, mouseX, mouseY);
   }

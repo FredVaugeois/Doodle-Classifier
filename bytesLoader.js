@@ -6,6 +6,7 @@
 // https://github.com/CodingTrain/Toy-Neural-Network-JS/tree/master/examples/doodle_classification
 
 
+// Voodoo magic for creating byte arrays from binary files (Thx Dan).
 p5.prototype.registerPreloadMethod('loadBytes');
 
 p5.prototype.loadBytes = function(file, callback) {

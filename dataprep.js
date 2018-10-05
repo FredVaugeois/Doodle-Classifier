@@ -7,70 +7,89 @@
 
 
 
-// Cree les tableaux de donnees
+// This function create the xs and ys tensors from the data tables
 function prepareData(data, labels){
-  // On cree des tableaux qui vont contenir nos donnees
+  // Local arrays that will contain the data to be converted to tensors
   let doodles = [];
   let labelsData = [];
   let returnedTensors = [];
 
-  // Pour tous les dessins
+  // For all doodles
   for (let i = 0; i < data.length; i++){
-    // On cree un tableau qui contiendra les pixels du dessins
+    // Let's create a pixel array to store each of them
     let pixels = [];
-    // Pour tous les pixels du dessins
+    // For all pixels in the Doodle
     for (let j = 0; j < dataLength; j++){
-      // On ajoute chaque pixel a ce tableau
+      // Let's add the pixel to the pixel array and normalize it (/255) to
+      // get a value between 0 and 1.
       pixels[j] = data[i][j] / 255;
     }
-    // On ajoute les pixels de ce dessins
+    // Add the pixels of this doodle to the doodle array
     doodles[i] = pixels;
 
-    // On regarde quel est le label de ce doodle
+    // Let's look what's the doodleLabelList index of the label of this doodle
     let doodleIndex = doodleLabelList.indexOf(labels[i]);
 
-    // On ajoute le vecteur label de ce doodle dans notre tableau label
+    // Add this index to the labels array
     labelsData[i] = doodleIndex;
   }
 
-  // On cree un tensor pour les xs
+  // Let's create the xs tensor with the doodles array
   xs = tf.tensor2d(doodles);
-  // On en cree un pour les ys en utilisant oneHot
+  // We need to use the "oneHot" function of tensorflow to process the labels
   let labelsTensor = tf.tensor1d(labelsData, 'int32');
   ys = tf.oneHot(labelsTensor, doodleLabelList.length).cast('float32');
-  // On elimine notre tensor de label (on ne s'en sert plus)
+  // Remove the labelsTensor (which was temporary) to avoid dataleaks
   labelsTensor.dispose();
 
-  // On retourne nos Tensors
+  // Let's store these tensors in the returned array to return both of them
+  // TODO: I know, I can create objects and make something way smarter than
+  //       this. I'll do it someday. Maybe.
   returnedTensors[0] = xs;
   returnedTensors[1] = ys;
   return returnedTensors;
 }
 
 
-// Separe les donnees d'entrainement et de testing
+// This function splits the data array into testing and training data
+// Be aware that this is not the "training" and "testing" set of the model
+// per se, because TensorFlow already has that functionnality (see model.js).
+// In this specific case, the testing set is used for the UI to show the
+// accuracy of the model on data that he never saw.
 function splitData(dataToSplit){
+  // Let's do the same thing as the "prepareData" and use dope arrays to
+  // return the data instead of using actual objects <3
   let training = [];
   let testing = [];
   let returnedArray = [];
 
-  for (let i = 0; i < totalData; i++){
+  // For all data
+  for (let i = 0; i < numberOfEachDoodle; i++){
+    // We need to make an offset because the data length is 784 (for each doodle)
     let offset = (i * dataLength);
-    let treshold = floor(data_proportion * totalData);
+    // You can change the "data_proportion" to change the % of training vs
+    // testing data.
+    let treshold = floor(data_proportion * numberOfEachDoodle);
+
+    // Split the data using the treshold
     if (i < treshold){
       training[i] = dataToSplit.bytes.subarray(offset, offset + dataLength);
     } else {
       testing[i - treshold] = dataToSplit.bytes.subarray(offset, offset + dataLength);
     }
   }
+  // Let's store these arrays in the returned array to return both of them
+  // TODO: I know, I can create objects and make something way smarter than
+  //       this. I'll do it someday. Maybe.
   returnedArray[0] = training;
   returnedArray[1] = testing;
   return returnedArray;
 }
 
 
-// Cree un tableau contenant de taille egale au tableau recu avec pour seule
-// donnee le label qui y est associe
+// Creates an array that basically only contains the label of the data table
+// with the same size. That exists because the data does not show what label
+// it actually is, so I need to create an array manually.
 function labelData(data, label){
   let labeledData = [];
   for (let i = 0 ; i < data.length; i++){
@@ -84,12 +103,13 @@ function labelData(data, label){
 
 
 
-// Cancer
-
-
+// Do you know cancer? No? Read that and you will!
+// If you want to make this viable, have fun, be my guest! :D
 function initializeData(){
+    // Don't panick: this shows that something's happening!
     console.log("Initializing data");
-    // On separe chaque donnee en 2
+
+    // Let's split each doodle data in 2 sets (training and testing)
     let shovelSeparated = splitData(shovelData);
     let sawSeparated = splitData(sawData);
     let screwDriverSeparated = splitData(screwdriverData);
@@ -101,7 +121,7 @@ function initializeData(){
     let hammerSeparated = splitData(hammerData);
     let drillSeparated = splitData(drillData);
 
-    // On cree un tableau label pour chaque data "splitee"
+    // Let's label the training and testing data sets
     let shovelLabelTrain = labelData(shovelSeparated[0], "Pelle");
     let shovelLabelTest = labelData(shovelSeparated[1], "Pelle");
 
@@ -132,7 +152,7 @@ function initializeData(){
     let drillLabelTrain = labelData(drillSeparated[0], "Drill");
     let drillLabelTest = labelData(drillSeparated[1], "Drill");
 
-    // On cree un seul tableau label d'entrainement
+    // Let's merge all these wonderful arrays into a single huge one
     training_labels = training_labels.concat(shovelLabelTrain);
     training_labels = training_labels.concat(sawLabelTrain);
     training_labels = training_labels.concat(screwDriverLabelTrain);
@@ -144,7 +164,7 @@ function initializeData(){
     training_labels = training_labels.concat(hammerLabelTrain);
     training_labels = training_labels.concat(drillLabelTrain);
 
-    // On cree un seul tableau label de test
+    // Same logic
     testing_labels = testing_labels.concat(shovelLabelTest);
     testing_labels = testing_labels.concat(sawLabelTest);
     testing_labels = testing_labels.concat(screwDriverLabelTest);
@@ -156,7 +176,7 @@ function initializeData(){
     testing_labels = testing_labels.concat(hammerLabelTest);
     testing_labels = testing_labels.concat(drillLabelTest);
 
-    // On cree un seul tableau de data d'entrainement
+    // Same logic
     training_data = training_data.concat(shovelSeparated[0]);
     training_data = training_data.concat(sawSeparated[0]);
     training_data = training_data.concat(screwDriverSeparated[0]);
@@ -168,7 +188,7 @@ function initializeData(){
     training_data = training_data.concat(hammerSeparated[0]);
     training_data = training_data.concat(drillSeparated[0]);
 
-    // On cree un seul tableau de data de test
+    // Same logic (who would have guessed)
     testing_data = testing_data.concat(shovelSeparated[1]);
     testing_data = testing_data.concat(sawSeparated[1]);
     testing_data = testing_data.concat(screwDriverSeparated[1]);
@@ -179,5 +199,6 @@ function initializeData(){
     testing_data = testing_data.concat(ladderSeparated[1]);
     testing_data = testing_data.concat(hammerSeparated[1]);
     testing_data = testing_data.concat(drillSeparated[1]);
+    // Don't panick: this shows that something's happening!
     console.log("Done");
 }

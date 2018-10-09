@@ -12,7 +12,9 @@ function prepareData(data, labels){
   // Local arrays that will contain the data to be converted to tensors
   let doodles = [];
   let labelsData = [];
+  // TODO: Return something that's less cancerous
   let returnedTensors = [];
+
   // For all doodles
   for (let i = 0; i < data.length; i++){
     // Let's create a pixel array to store each of them
@@ -40,163 +42,46 @@ function prepareData(data, labels){
   // Remove the labelsTensor (which was temporary) to avoid dataleaks
   labelsTensor.dispose();
 
-  // Let's store these tensors in the returned array to return both of them
-  // TODO: I know, I can create objects and make something way smarter than
-  //       this. I'll do it someday. Maybe.
+  // Let's set the sourceXs and Ys for what we just created
   returnedTensors[0] = xs;
   returnedTensors[1] = ys;
   return returnedTensors;
 }
 
 
-// This function splits the data array into testing and training data
-// Be aware that this is not the "training" and "testing" set of the model
-// per se, because TensorFlow already has that functionnality (see model.js).
-// In this specific case, the testing set is used for the UI to show the
-// accuracy of the model on data that he never saw.
-function splitData(dataToSplit){
-  // Let's do the same thing as the "prepareData" and use dope arrays to
-  // return the data instead of using actual objects <3
-  let training = [];
-  let testing = [];
-  let returnedArray = [];
-
-  // For all data
-  for (let i = 0; i < numberOfEachDoodle; i++){
-    // We need to make an offset because the data length is 784 (for each doodle)
-    let offset = (i * dataLength);
-    // You can change the "data_proportion" to change the % of training vs
-    // testing data.
-    let treshold = floor(data_proportion * numberOfEachDoodle);
-
-    // Split the data using the treshold
-    if (i < treshold){
-      training[i] = dataToSplit.bytes.subarray(offset, offset + dataLength);
-    } else {
-      testing[i - treshold] = dataToSplit.bytes.subarray(offset, offset + dataLength);
-    }
-  }
-  // Let's store these arrays in the returned array to return both of them
-  // TODO: I know, I can create objects and make something way smarter than
-  //       this. I'll do it someday. Maybe.
-  returnedArray[0] = training;
-  returnedArray[1] = testing;
-  return returnedArray;
-}
-
-
-// Creates an array that basically only contains the label of the data table
-// with the same size. That exists because the data does not show what label
-// it actually is, so I need to create an array manually.
-function labelData(data, label){
-  let labeledData = [];
-  for (let i = 0 ; i < data.length; i++){
-    labeledData[i] = label;
-  }
-  return labeledData;
-}
-
-
-
-
-
-
-// Do you know cancer? No? Read that and you will! TODO: Create objects...
-// If you want to make this viable, have fun, be my guest! :D
+// Concatenates all the training and testing labels/data
 function initializeData(){
     // Don't panick: this shows that something's happening!
     console.log("Initializing data");
 
-    // Let's split each doodle data in 2 sets (training and testing)
-    let shovelSeparated = splitData(shovelData);
-    let sawSeparated = splitData(sawData);
-    let screwDriverSeparated = splitData(screwdriverData);
-    let truckSeparated = splitData(truckData);
-    let tractorSeparated = splitData(tractorData);
-    let scissorsSeparated = splitData(scissorsData);
-    let nailSeparated = splitData(nailData);
-    let ladderSeparated = splitData(ladderData);
-    let hammerSeparated = splitData(hammerData);
-    let drillSeparated = splitData(drillData);
+    // For all doodles
+    for(let i = 0; i < doodleLabelList.length; i++){
+      // Create a dataObject for that doodle
+      dataObjectsArray[i] = new dataObject(doodleLabelList[i]);
+      dataObjectsArray[i].loadBytesData();
+      dataObjectsArray[i].splitData();
+    }
 
-    // Let's label the training and testing data sets
-    let shovelLabelTrain = labelData(shovelSeparated[0], "Shovel");
-    let shovelLabelTest = labelData(shovelSeparated[1], "Shovel");
+    // Let's merge all the arrays of the data objects into single ones
 
-    let sawLabelTrain = labelData(sawSeparated[0], "Saw");
-    let sawLabelTest = labelData(sawSeparated[1], "Saw");
+    // For all data objects
+    for(let i = 0; i < dataObjectsArray.length; i++){
+      // Concatenate the training labels
+      training_labels = training_labels.
+                          concat(dataObjectsArray[i].getTrainingLabels());
 
-    let screwDriverLabelTrain = labelData(screwDriverSeparated[0], "Screwdriver");
-    let screwDriverLabelTest = labelData(screwDriverSeparated[1], "Screwdriver");
+      // Same for the testing labels
+      testing_labels = testing_labels.
+                          concat(dataObjectsArray[i].getTestingLabels());
 
-    let truckLabelTrain = labelData(truckSeparated[0], "Truck");
-    let truckLabelTest = labelData(truckSeparated[1], "Truck");
+      // Same for the training data
+      training_data = training_data.
+                          concat(dataObjectsArray[i].getTrainingData());
 
-    let tractorLabelTrain = labelData(tractorSeparated[0], "Tractor");
-    let tractorLabelTest = labelData(tractorSeparated[1], "Tractor");
-
-    let scissorsLabelTrain = labelData(scissorsSeparated[0], "Scissors");
-    let scissorsLabelTest = labelData(scissorsSeparated[1], "Scissors");
-
-    let nailLabelTrain = labelData(nailSeparated[0], "Nail");
-    let nailLabelTest = labelData(nailSeparated[1], "Nail");
-
-    let ladderLabelTrain = labelData(ladderSeparated[0], "Ladder");
-    let ladderLabelTest = labelData(ladderSeparated[1], "Ladder");
-
-    let hammerLabelTrain = labelData(hammerSeparated[0], "Hammer");
-    let hammerLabelTest = labelData(hammerSeparated[1], "Hammer");
-
-    let drillLabelTrain = labelData(drillSeparated[0], "Drill");
-    let drillLabelTest = labelData(drillSeparated[1], "Drill");
-
-    // Let's merge all these wonderful arrays into a single huge one
-    training_labels = training_labels.concat(shovelLabelTrain);
-    training_labels = training_labels.concat(sawLabelTrain);
-    training_labels = training_labels.concat(screwDriverLabelTrain);
-    training_labels = training_labels.concat(truckLabelTrain);
-    training_labels = training_labels.concat(tractorLabelTrain);
-    training_labels = training_labels.concat(scissorsLabelTrain);
-    training_labels = training_labels.concat(nailLabelTrain);
-    training_labels = training_labels.concat(ladderLabelTrain);
-    training_labels = training_labels.concat(hammerLabelTrain);
-    training_labels = training_labels.concat(drillLabelTrain);
-
-    // Same logic
-    testing_labels = testing_labels.concat(shovelLabelTest);
-    testing_labels = testing_labels.concat(sawLabelTest);
-    testing_labels = testing_labels.concat(screwDriverLabelTest);
-    testing_labels = testing_labels.concat(truckLabelTest);
-    testing_labels = testing_labels.concat(tractorLabelTest);
-    testing_labels = testing_labels.concat(scissorsLabelTest);
-    testing_labels = testing_labels.concat(nailLabelTest);
-    testing_labels = testing_labels.concat(ladderLabelTest);
-    testing_labels = testing_labels.concat(hammerLabelTest);
-    testing_labels = testing_labels.concat(drillLabelTest);
-
-    // Same logic
-    training_data = training_data.concat(shovelSeparated[0]);
-    training_data = training_data.concat(sawSeparated[0]);
-    training_data = training_data.concat(screwDriverSeparated[0]);
-    training_data = training_data.concat(truckSeparated[0]);
-    training_data = training_data.concat(tractorSeparated[0]);
-    training_data = training_data.concat(scissorsSeparated[0]);
-    training_data = training_data.concat(nailSeparated[0]);
-    training_data = training_data.concat(ladderSeparated[0]);
-    training_data = training_data.concat(hammerSeparated[0]);
-    training_data = training_data.concat(drillSeparated[0]);
-
-    // Same logic (who would have guessed)
-    testing_data = testing_data.concat(shovelSeparated[1]);
-    testing_data = testing_data.concat(sawSeparated[1]);
-    testing_data = testing_data.concat(screwDriverSeparated[1]);
-    testing_data = testing_data.concat(truckSeparated[1]);
-    testing_data = testing_data.concat(tractorSeparated[1]);
-    testing_data = testing_data.concat(scissorsSeparated[1]);
-    testing_data = testing_data.concat(nailSeparated[1]);
-    testing_data = testing_data.concat(ladderSeparated[1]);
-    testing_data = testing_data.concat(hammerSeparated[1]);
-    testing_data = testing_data.concat(drillSeparated[1]);
+      // Same for the testing data
+      testing_data = testing_data.
+                          concat(dataObjectsArray[i].getTestingData());
+    }
     // Don't panick: this shows that something's happening!
     console.log("Done");
 }

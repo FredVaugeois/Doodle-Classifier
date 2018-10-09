@@ -20,7 +20,7 @@
 
 
 // This is the number of images of each doodle.
-// That means the total number of images is 6000 x (number of doodles).
+// That means the total number of images is numberOfEachDoodle x (number of doodles).
 let numberOfEachDoodle = 5000;
 
 // Doodle list (you can change this bad boy). If you change it, though, you'll
@@ -66,7 +66,7 @@ const outputLayer_Activation = "softmax";
 // Model.compile (creates the model)
 // You can change the optimizer function, the loss function and the learning
 // rate here. This is probably the most important modifications you can do.
-const model_LearningRate = 0.15;
+const model_LearningRate = 0.50;
 const model_Optimizer = tf.train.adagrad(model_LearningRate);
 const model_Loss = "meanSquaredError";
 

@@ -17,17 +17,11 @@ let testing_data = [];
 let training_labels = [];
 let testing_labels = [];
 
-// Contains the bytes loaded from the byteLoader function
-let shovelData = {};
-let sawData = {};
-let screwdriverData = {};
-let truckData = {};
-let tractorData = {};
-let scissorsData = {};
-let nailData = {};
-let ladderData = {};
-let hammerData = {};
-let drillData = {};
+// Contains all the data objects
+let dataObjectsArray = [];
+
+// Contains the arrays of preloaded data
+let dataPreload = [];
 
 
 // Model
@@ -39,21 +33,21 @@ ys = {};
 testing_xs = {};
 testing_ys = {};
 
-// This functions is called at the begining (with p5.js) and loads the
-// binary files into the corresponding bytes array.
+// Preload function of p5.js (called at the begining) that helps us load data
 function preload(){
-  // Use the loadBytes function to fill the data arrays
-  shovelData = loadBytes('./datasets/shovel.bin');
-  sawData = loadBytes('./datasets/saw.bin');
-  screwdriverData = loadBytes('./datasets/screwdriver.bin');
-  truckData = loadBytes('./datasets/truck.bin');
-  tractorData = loadBytes('./datasets/tractor.bin');
-  scissorsData = loadBytes('./datasets/scissors.bin');
-  nailData = loadBytes('./datasets/nail.bin');
-  ladderData = loadBytes('./datasets/ladder.bin');
-  hammerData = loadBytes('./datasets/hammer.bin');
-  drillData = loadBytes('./datasets/drill.bin');
+  // Don't panick: this shows that something's happening!
+  console.log("Preloading data");
+  // For all doodles
+  for(let i = 0; i < doodleLabelList.length; i++){
+    // Note the corresponding label
+    let labelStr = doodleLabelList[i].toLowerCase();
+    // Load the binary file associated with it
+    dataPreload[i] = loadBytes('./datasets/' + labelStr + '.bin');
+  }
+  // Don't panick: this shows that something's happening!
+  console.log("Done");
 }
+
 
 // Setup function of p5.js (called after preload)
 function setup(){
@@ -66,23 +60,25 @@ function setup(){
 
   // Don't panick: this shows that something's happening!
   console.log("Creating training tensors");
+
+  // TODO: Something less cancerous
   // Let's create the training and testing tensors
-  let trainingTensors = prepareData(training_data, training_labels);
+  let rTensors = prepareData(training_data, training_labels);
+  xs = rTensors[0];
+  ys = rTensors[1];
+
   // Don't panick: this shows that something's happening!
   console.log("Done");
   // Don't panick: this shows that something's happening!
   console.log("Creating testing tensors");
-  let testingTensors = prepareData(testing_data, testing_labels);
+
+  // TODO: Something less cancerous
+  rTensors = prepareData(testing_data, testing_labels);
+  testing_xs = rTensors[0];
+  testing_ys = rTensors[1];
+
   // Don't panick: this shows that something's happening!
   console.log("Done");
-
-
-  // Let's get the xs and ys of training and testing tensors (yeah, I know, this
-  // is horrible code. Make me feel bad).
-  xs = trainingTensors[0];
-  ys = trainingTensors[1];
-  testing_xs = testingTensors[0];
-  testing_ys = testingTensors[1];
 
   // Don't panick: this shows that something's happening!
   console.log("Creating model");

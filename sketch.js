@@ -8,7 +8,7 @@
 
 
 
-// 28x28 images = 784 pixels. 2 + 2 is 4 minus 1 that's three Quick maths.
+// 28x28 images = 784 pixels. Quick maths.
 let dataLength = 784;
 
 // Data arrays
@@ -165,7 +165,7 @@ function setup(){
     background(0);
 
     // Let's generate a random index to go fetch the Doodle
-    let randomIndex = floor(random((numberOfEachDoodle * 10) * (1-data_proportion)));
+    let randomIndex = floor(random((numberOfEachDoodle * doodleLabelList.length) * (1-data_proportion)));
     // The random index needs to be 'Offset-ed' (yeah that's not a word) by
     // the length (in pixels) of the doodle so that it corresponds to the
     // beginning of the actual index'th doodle

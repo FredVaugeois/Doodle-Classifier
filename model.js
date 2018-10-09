@@ -33,12 +33,12 @@ let doodleLabelList = [
   'Saw',
   'Screwdriver',
   'Truck',
-  'Tractor',
-  'Scissors',
-  'Nail',
+//  'Tractor',
+//  'Scissors',
+//  'Nail',
   'Ladder',
-  'Hammer',
-  'Drill'
+//  'Drill',
+  'Hammer'
 ]
 
 // Hidden layers

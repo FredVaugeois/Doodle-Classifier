@@ -32,7 +32,6 @@ function prepareData(data, labels){
     // Add this index to the labels array
     labelsData[i] = doodleIndex;
   }
-
   // Let's create the xs tensor with the doodles array
   xs = tf.tensor2d(doodles);
   // We need to use the "oneHot" function of tensorflow to process the labels
@@ -46,7 +45,6 @@ function prepareData(data, labels){
   //       this. I'll do it someday. Maybe.
   returnedTensors[0] = xs;
   returnedTensors[1] = ys;
-  console.log(xs.dataSync());
   return returnedTensors;
 }
 
@@ -103,7 +101,7 @@ function labelData(data, label){
 
 
 
-// Do you know cancer? No? Read that and you will!
+// Do you know cancer? No? Read that and you will! TODO: Create objects...
 // If you want to make this viable, have fun, be my guest! :D
 function initializeData(){
     // Don't panick: this shows that something's happening!
@@ -122,32 +120,32 @@ function initializeData(){
     let drillSeparated = splitData(drillData);
 
     // Let's label the training and testing data sets
-    let shovelLabelTrain = labelData(shovelSeparated[0], "Pelle");
-    let shovelLabelTest = labelData(shovelSeparated[1], "Pelle");
+    let shovelLabelTrain = labelData(shovelSeparated[0], "Shovel");
+    let shovelLabelTest = labelData(shovelSeparated[1], "Shovel");
 
-    let sawLabelTrain = labelData(sawSeparated[0], "Scie");
-    let sawLabelTest = labelData(sawSeparated[1], "Scie");
+    let sawLabelTrain = labelData(sawSeparated[0], "Saw");
+    let sawLabelTest = labelData(sawSeparated[1], "Saw");
 
-    let screwDriverLabelTrain = labelData(screwDriverSeparated[0], "Tournevis");
-    let screwDriverLabelTest = labelData(screwDriverSeparated[1], "Tournevis");
+    let screwDriverLabelTrain = labelData(screwDriverSeparated[0], "Screwdriver");
+    let screwDriverLabelTest = labelData(screwDriverSeparated[1], "Screwdriver");
 
-    let truckLabelTrain = labelData(truckSeparated[0], "Camion");
-    let truckLabelTest = labelData(truckSeparated[1], "Camion");
+    let truckLabelTrain = labelData(truckSeparated[0], "Truck");
+    let truckLabelTest = labelData(truckSeparated[1], "Truck");
 
-    let tractorLabelTrain = labelData(tractorSeparated[0], "Tracteur");
-    let tractorLabelTest = labelData(tractorSeparated[1], "Tracteur");
+    let tractorLabelTrain = labelData(tractorSeparated[0], "Tractor");
+    let tractorLabelTest = labelData(tractorSeparated[1], "Tractor");
 
-    let scissorsLabelTrain = labelData(scissorsSeparated[0], "Ciseaux");
-    let scissorsLabelTest = labelData(scissorsSeparated[1], "Ciseaux");
+    let scissorsLabelTrain = labelData(scissorsSeparated[0], "Scissors");
+    let scissorsLabelTest = labelData(scissorsSeparated[1], "Scissors");
 
-    let nailLabelTrain = labelData(nailSeparated[0], "Clou");
-    let nailLabelTest = labelData(nailSeparated[1], "Clou");
+    let nailLabelTrain = labelData(nailSeparated[0], "Nail");
+    let nailLabelTest = labelData(nailSeparated[1], "Nail");
 
-    let ladderLabelTrain = labelData(ladderSeparated[0], "Échelle");
-    let ladderLabelTest = labelData(ladderSeparated[1], "Échelle");
+    let ladderLabelTrain = labelData(ladderSeparated[0], "Ladder");
+    let ladderLabelTest = labelData(ladderSeparated[1], "Ladder");
 
-    let hammerLabelTrain = labelData(hammerSeparated[0], "Marteau");
-    let hammerLabelTest = labelData(hammerSeparated[1], "Marteau");
+    let hammerLabelTrain = labelData(hammerSeparated[0], "Hammer");
+    let hammerLabelTest = labelData(hammerSeparated[1], "Hammer");
 
     let drillLabelTrain = labelData(drillSeparated[0], "Drill");
     let drillLabelTest = labelData(drillSeparated[1], "Drill");

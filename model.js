@@ -21,7 +21,7 @@
 
 // This is the number of images of each doodle.
 // That means the total number of images is 6000 x (number of doodles).
-let numberOfEachDoodle = 6000;
+let numberOfEachDoodle = 5000;
 
 // Doodle list (you can change this bad boy). If you change it, though, you'll
 // need to load some more data in dataPrep and add the binary file to the project
@@ -66,10 +66,7 @@ const outputLayer_Activation = "softmax";
 // Model.compile (creates the model)
 // You can change the optimizer function, the loss function and the learning
 // rate here. This is probably the most important modifications you can do.
-// Sequantial means that the outputs of the previous layer is the input of the
-// actual layer.
-const model_Type = tf.sequential();
-const model_LearningRate = 0.10;
+const model_LearningRate = 0.15;
 const model_Optimizer = tf.train.adagrad(model_LearningRate);
 const model_Loss = "meanSquaredError";
 
@@ -83,22 +80,21 @@ const model_Loss = "meanSquaredError";
 // The validation split is the % of training vs testing data (this is managed
 // by TF.js and has nothing to do with my data split, which is only used for
 // the UI). Epochs: Number of times the whole data set is going to be used for
-// training. Batchsize: Number of doodles tested at the same time (faster than
-// doing one at the time, but less precise)
+// training. Batchsize: Number of doodles tested at the same time before
+// updating the weights (faster than doing one at the time, but less precise)
 const training_DoShuffle = true;
 const training_ValidationSplit = 0.1;
-const training_BatchSize = 8;
+const training_BatchSize = 16;
 const training_NumEpochs = 15;
 
 // Training vs testing data FOR THE UI ONLY
-const data_proportion = 0.9;
+const data_proportion = 0.8;
 
 
-// Method that build the model (Yeah that's why I called it that way)
+// Method that builds the model (Yeah that's why I called it that way)
 function buildModel(){
   // Let's use the model type sequential for now
-  let tempModel = model_Type;
-
+  let tempModel = tf.sequential();
 
   // Let's create the hidden layers of the model
 
@@ -110,6 +106,9 @@ function buildModel(){
   });
   */ // This is commented because it sucked.
 
+  // Watch out: the first layer must have an inputShape of dataLength.
+  // The other input shapes are 'inferred' from the previous layer since
+  // we're in a sequential model.
   const hiddenLayer2 = tf.layers.dense({
     units: hiddenLayer2_Units,
     inputShape: dataLength,
@@ -117,14 +116,12 @@ function buildModel(){
   });
 
   const hiddenLayer3 = tf.layers.dense({
-    units: hiddenLayer2_Units,
-    inputShape: dataLength,
+    units: hiddenLayer3_Units,
     activation: hiddenLayers_Activation
   });
 
   const hiddenLayer4 = tf.layers.dense({
-    units: hiddenLayer2_Units,
-    inputShape: dataLength,
+    units: hiddenLayer4_Units,
     activation: hiddenLayers_Activation
   });
 

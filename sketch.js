@@ -8,7 +8,7 @@
 
 
 
-// 28x28 images = 784 pixels. Quick maths.
+// 28x28 images = 784 pixels. 2 + 2 is 4 minus 1 that's three Quick maths.
 let dataLength = 784;
 
 // Data arrays
@@ -147,7 +147,7 @@ function setup(){
     // Alright, let's see what label this corresponds to!
     let classification = doodleLabelList[index];
     // What the AI thinks you draw is (drumroll)
-    console.log(classification);
+    console.log("Guessed: " + classification);
   });
 
 

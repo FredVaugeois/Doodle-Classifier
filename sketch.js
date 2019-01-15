@@ -35,7 +35,7 @@ testing_ys = {};
 
 // Preload function of p5.js (called at the begining) that helps us load data
 function preload(){
-  // Don't panick: this shows that something's happening!
+  // Log progress
   console.log("Preloading data");
   // For all doodles
   for(let i = 0; i < doodleLabelList.length; i++){
@@ -44,7 +44,7 @@ function preload(){
     // Load the binary file associated with it
     dataPreload[i] = loadBytes('./datasets/' + labelStr + '.bin');
   }
-  // Don't panick: this shows that something's happening!
+  // Log progress
   console.log("Done");
 }
 
@@ -58,7 +58,7 @@ function setup(){
   // Initialize the data (see "dataprep" for solid nightmares)
   initializeData();
 
-  // Don't panick: this shows that something's happening!
+  // Log progress
   console.log("Creating training tensors");
 
   // TODO: Something less cancerous
@@ -67,9 +67,9 @@ function setup(){
   xs = rTensors[0];
   ys = rTensors[1];
 
-  // Don't panick: this shows that something's happening!
+  // Log progress
   console.log("Done");
-  // Don't panick: this shows that something's happening!
+  
   console.log("Creating testing tensors");
 
   // TODO: Something less cancerous
@@ -77,23 +77,25 @@ function setup(){
   testing_xs = rTensors[0];
   testing_ys = rTensors[1];
 
-  // Don't panick: this shows that something's happening!
+  // Log progress
   console.log("Done");
-
-  // Don't panick: this shows that something's happening!
+  
+  // Log progress
   console.log("Creating model");
-  // Don't panick: this shows that something's happening!
+
+  // Let's build the model
   model = buildModel();
-  // Don't panick: this shows that something's happening!
+  
+  // Log progress
   console.log("Done");
 
-  // Don't panick: this shows that something's happening!
+  // Log progress
   console.log("Training model");
 
   // Let's train the model (this .then(() => thingy is an application of the
   // new ES6 functionnality combined with the js promises).
   train().then(() => {
-      // Don't panick: this shows that something's happening!
+      // Log progress
       console.log("Done");
   });
 

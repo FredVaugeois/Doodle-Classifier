@@ -51,7 +51,7 @@ function prepareData(data, labels){
 
 // Concatenates all the training and testing labels/data
 function initializeData(){
-    // Don't panick: this shows that something's happening!
+    // Log progress
     console.log("Initializing data");
 
     // For all doodles
@@ -82,6 +82,6 @@ function initializeData(){
       testing_data = testing_data.
                           concat(dataObjectsArray[i].getTestingData());
     }
-    // Don't panick: this shows that something's happening!
+    // Log progress
     console.log("Done");
 }

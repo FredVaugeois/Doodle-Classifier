@@ -25,19 +25,18 @@ let numberOfEachDoodle = 5000;
 
 // Doodle list (you can change this bad boy). If you change it, though, you'll
 // need to load some more data in dataPrep and add the binary file to the project
-// from google quick draw. Go see the README file in the github repo for a
-// link to a tutorial on how to do it.
-// Just kidding: https://www.youtube.com/watch?v=gX7U6WA7Ffk
+// from google quick draw. Here is how to do it:
+// https://www.youtube.com/watch?v=gX7U6WA7Ffk
 let doodleLabelList = [
   'Shovel',
   'Saw',
   'Screwdriver',
   'Truck',
-//  'Tractor',
-//  'Scissors',
-//  'Nail',
+  'Tractor',
+  'Scissors',
+  'Nail',
   'Ladder',
-//  'Drill',
+  'Drill',
   'Hammer'
 ]
 
@@ -49,7 +48,7 @@ let doodleLabelList = [
 // that, because dude, if you're looking at this code as of right now, you're
 // better than that.
 
-//const hiddenLayer1_Units = 512;   // -> This is commented because it sucked.
+//const hiddenLayer1_Units = 512;   // -> This is commented because it wasn't good.
 const hiddenLayer2_Units = 256;
 const hiddenLayer3_Units = 128;
 const hiddenLayer4_Units = 64;
@@ -104,7 +103,7 @@ function buildModel(){
     inputShape: dataLength,
     activation: hiddenLayers_Activation
   });
-  */ // This is commented because it sucked.
+  */ // This is commented because it wasn't good.
 
   // Watch out: the first layer must have an inputShape of dataLength.
   // The other input shapes are 'inferred' from the previous layer since

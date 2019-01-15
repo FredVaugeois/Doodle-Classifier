@@ -57,7 +57,6 @@ class dataObject {
   }
 
   // Getters
-
   getTrainingData(){
     return this.trainingData;
   }
